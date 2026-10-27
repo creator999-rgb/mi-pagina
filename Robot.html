@@ -1,0 +1,1394 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+
+<title>ABEJA ROBÓTICA APP</title>
+
+<style>
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    background: #1a1a2e;
+    color: white;
+    font-family: Arial, sans-serif;
+    text-align: center;
+}
+
+header {
+    background: #ff8c00;
+    color: black;
+    padding: 15px;
+    font-size: 22px;
+    font-weight: bold;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    border-bottom: 3px solid #ffb347;
+}
+
+/* ÁREA DE LA ABEJA */
+#arena {
+    width: 95%;
+    height: 320px;
+    background: #16213e;
+    border: 3px solid #ff8c00;
+    border-radius: 15px;
+    margin: 15px auto;
+    position: relative;
+    overflow: hidden;
+}
+
+/* ABEJA COMPLETA */
+#abeja {
+    position: absolute;
+    width: 140px;
+    height: 155px;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    transition: left .2s, top .2s;
+}
+
+/* CUERPO CON FRANJAS */
+.cuerpo {
+    width: 76px;
+    height: 90px;
+    position: absolute;
+    top: 35px;
+    left: 32px;
+    background: repeating-linear-gradient(
+        to bottom,
+        #ff9500 0px,
+        #ff9500 18px,
+        #171717 18px,
+        #171717 36px
+    );
+    border: 3px solid #ffb347;
+    border-radius: 48%;
+    box-shadow: 0 0 14px #ff8c00;
+    z-index: 3;
+}
+
+/* CABEZA */
+.cabeza {
+    position: absolute;
+    width: 65px;
+    height: 60px;
+    top: -27px;
+    left: 3px;
+    background: #ffae42;
+    border: 3px solid #ff8c00;
+    border-radius: 50%;
+}
+
+/* OJOS */
+.ojo {
+    position: absolute;
+    width: 15px;
+    height: 19px;
+    background: white;
+    border: 2px solid #222;
+    border-radius: 50%;
+    top: 17px;
+}
+
+.ojo::after {
+    content: "";
+    position: absolute;
+    width: 7px;
+    height: 10px;
+    background: #111;
+    border-radius: 50%;
+    top: 3px;
+    left: 3px;
+}
+
+.ojo.izquierdo {
+    left: 9px;
+}
+
+.ojo.derecho {
+    right: 9px;
+}
+
+/* SONRISA */
+.boca {
+    position: absolute;
+    width: 20px;
+    height: 10px;
+    border-bottom: 3px solid #222;
+    border-radius: 50%;
+    top: 42px;
+    left: 20px;
+}
+
+/* ANTENAS */
+.antena {
+    position: absolute;
+    width: 4px;
+    height: 25px;
+    background: #ff8c00;
+    border: 1px solid #222;
+    top: -23px;
+    border-radius: 5px;
+    transform-origin: bottom;
+}
+
+.antena.izquierda {
+    left: 14px;
+    transform: rotate(-30deg);
+}
+
+.antena.derecha {
+    right: 14px;
+    transform: rotate(30deg);
+}
+
+.antena::after {
+    content: "";
+    position: absolute;
+    width: 11px;
+    height: 11px;
+    background: #ff8c00;
+    border: 2px solid #222;
+    border-radius: 50%;
+    top: -7px;
+    left: -5px;
+}
+
+/* ALAS ANIMADAS */
+.ala {
+    position: absolute;
+    width: 42px;
+    height: 58px;
+    background: rgba(180, 230, 255, 0.75);
+    border: 3px solid #ffb347;
+    border-radius: 50%;
+    top: 7px;
+    z-index: 1;
+    transform-origin: bottom center;
+    animation: volar .25s infinite alternate;
+}
+
+.ala.izquierda {
+    left: 7px;
+    transform: rotate(-35deg);
+}
+
+.ala.derecha {
+    right: 7px;
+    transform: rotate(35deg);
+}
+
+@keyframes volar {
+    from {
+        margin-top: -3px;
+    }
+    to {
+        margin-top: 5px;
+    }
+}
+
+/* SEIS PATAS */
+.pata {
+    position: absolute;
+    width: 28px;
+    height: 5px;
+    background: #222;
+    border: 2px solid #ff8c00;
+    border-radius: 5px;
+    z-index: 2;
+}
+
+.p1 {
+    top: 65px;
+    left: 8px;
+    transform: rotate(35deg);
+}
+
+.p2 {
+    top: 88px;
+    left: 5px;
+}
+
+.p3 {
+    top: 111px;
+    left: 8px;
+    transform: rotate(-35deg);
+}
+
+.p4 {
+    top: 65px;
+    right: 8px;
+    transform: rotate(-35deg);
+}
+
+.p5 {
+    top: 88px;
+    right: 5px;
+}
+
+.p6 {
+    top: 111px;
+    right: 8px;
+    transform: rotate(35deg);
+}
+
+/* AGUIJÓN */
+.aguijon {
+    position: absolute;
+    left: 58px;
+    bottom: 0;
+    width: 0;
+    height: 0;
+    border-left: 12px solid transparent;
+    border-right: 12px solid transparent;
+    border-top: 22px solid #ff8c00;
+    z-index: 2;
+}
+
+/* LUCES DEL ROBOT */
+.luz {
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    background: #ff8c00;
+    border-radius: 50%;
+    box-shadow: 0 0 10px #ff8c00;
+    bottom: 15px;
+    left: 33px;
+}
+
+/* MOVIMIENTO AL SALUDAR */
+.saludando .antena.derecha {
+    animation: saludo .3s infinite alternate;
+}
+
+.saludando .cabeza {
+    animation: cabeza .3s infinite alternate;
+}
+
+@keyframes saludo {
+    from {
+        transform: rotate(30deg);
+    }
+    to {
+        transform: rotate(75deg);
+    }
+}
+
+@keyframes cabeza {
+    from {
+        rotate: -5deg;
+    }
+    to {
+        rotate: 5deg;
+    }
+}
+
+/* CONTROLES */
+#controles {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    width: 90%;
+    max-width: 300px;
+    margin: 15px auto;
+}
+
+.btn {
+    padding: 22px 0;
+    font-size: 24px;
+    background: #0f3460;
+    border: 2px solid #ff8c00;
+    color: #ffae42;
+    border-radius: 15px;
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: manipulation;
+}
+
+.btn:active {
+    background: #ff8c00;
+    color: black;
+}
+
+.btn-saludar {
+    grid-column: 1 / 4;
+    background: #e94560;
+    border-color: #e94560;
+    color: white;
+    font-size: 18px;
+    padding: 15px;
+}
+
+/* TARJETAS */
+.card {
+    background: #16213e;
+    border: 2px solid #ff8c00;
+    border-radius: 15px;
+    padding: 15px;
+    margin: 15px 10px;
+    text-align: left;
+}
+
+.card h2 {
+    color: #ffae42;
+    text-align: center;
+    margin: 5px 0 15px;
+}
+
+.card h3 {
+    color: #ffae42;
+}
+
+.img-box {
+    width: 100%;
+    background: #0f3460;
+    border-radius: 10px;
+    padding: 8px;
+    margin: 8px 0;
+}
+
+.img-box img {
+    display: block;
+    width: 100%;
+    height: 180px;
+    object-fit: contain;
+    border-radius: 8px;
+    background: #080b15;
+}
+
+input[type="file"] {
+    width: 100%;
+    margin: 8px 0;
+    color: white;
+}
+
+audio {
+    width: 100%;
+    margin-top: 10px;
+}
+
+.descripcion {
+    font-size: 14px;
+    line-height: 1.5;
+}
+</style>
+</head>
+
+<body>
+
+<header>🐝 ABEJA ROBÓTICA APP 🤖</header>
+
+<h2 style="color:#ffae42">¡Controla mi abeja robot!</h2>
+
+<!-- ÁREA DE MOVIMIENTO -->
+<div id="arena">
+
+    <div id="abeja">
+
+        <!-- ALAS -->
+        <div class="ala izquierda"></div>
+        <div class="ala derecha"></div>
+
+        <!-- PATAS -->
+        <div class="pata p1"></div>
+        <div class="pata p2"></div>
+        <div class="pata p3"></div>
+        <div class="pata p4"></div>
+        <div class="pata p5"></div>
+        <div class="pata p6"></div>
+
+        <!-- CUERPO -->
+        <div class="cuerpo">
+
+            <!-- CABEZA -->
+            <div class="cabeza">
+                <div class="antena izquierda"></div>
+                <div class="antena derecha"></div>
+
+                <div class="ojo izquierdo"></div>
+                <div class="ojo derecho"></div>
+
+                <div class="boca"></div>
+            </div>
+
+            <div class="luz"></div>
+        </div>
+
+        <!-- AGUIJÓN -->
+        <div class="aguijon"></div>
+
+    </div>
+
+</div>
+
+<!-- CONTROLES -->
+<div id="controles">
+
+    <div></div>
+
+    <button class="btn" onclick="mover('arriba')">⬆️</button>
+
+    <div></div>
+
+    <button class="btn" onclick="mover('izquierda')">⬅️</button>
+
+    <button class="btn" onclick="mover('abajo')">⬇️</button>
+
+    <button class="btn" onclick="mover('derecha')">➡️</button>
+
+    <button class="btn btn-saludar" onclick="saludar()">
+        👋 SALUDAR
+    </button>
+
+</div>
+
+<!-- IMÁGENES -->
+<div class="card">
+
+    <h2>📸 2 Imágenes de la Abeja Robot</h2>
+
+    <div class="img-box">
+        <p>IMAGEN 1 - Selecciona una foto de tu galería</p>
+
+        <input type="file"
+               accept="image/*"
+               onchange="cargarImg(this,'img1')">
+
+        <img id="img1"
+             alt="Primera imagen seleccionada"
+             src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='200'%3E%3Crect width='100%25' height='100%25' fill='%230f3460'/%3E%3Ctext x='50%25' y='45%25' font-size='22' text-anchor='middle' fill='%23ffae42'%3EABEJA ROBOT%3C/text%3E%3Ctext x='50%25' y='65%25' font-size='15' text-anchor='middle' fill='white'%3ESelecciona una foto%3C/text%3E%3C/svg%3E">
+    </div>
+
+    <div class="img-box">
+        <p>IMAGEN 2 - Selecciona otra foto de tu galería</p>
+
+        <input type="file"
+               accept="image/*"
+               onchange="cargarImg(this,'img2')">
+
+        <img id="img2"
+             alt="Segunda imagen seleccionada"
+             src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='200'%3E%3Crect width='100%25' height='100%25' fill='%230f3460'/%3E%3Ctext x='50%25' y='45%25' font-size='22' text-anchor='middle' fill='%23ffae42'%3EABEJA ROBOT%3C/text%3E%3Ctext x='50%25' y='65%25' font-size='15' text-anchor='middle' fill='white'%3ESelecciona una foto%3C/text%3E%3C/svg%3E">
+    </div>
+
+</div>
+
+<!-- PODCAST -->
+<div class="card">
+
+    <h2>🎧 Audio de Voz - Podcast</h2>
+
+    <p>1. Graba tu voz desde el celular:</p>
+
+    <button class="btn btn-saludar"
+            style="grid-column:auto"
+            onclick="grabarAudio()">
+        🎤 GRABAR / PARAR
+    </button>
+
+    <p id="estadoAudio"
+       style="color:#ffae42;text-align:center">
+    </p>
+
+    <audio id="player" controls></audio>
+
+    <p style="margin-top:20px">
+        2. O selecciona un audio de tu celular:
+    </p>
+
+    <input type="file"
+           accept="audio/*"
+           onchange="cargarAudio(this)">
+
+</div>
+
+<!-- INFORMACIÓN -->
+<div class="card">
+
+    <h2>🐝 Información de la Abeja Robot</h2>
+
+    <p class="descripcion">
+        Esta abeja robótica es una representación creada con HTML,
+        CSS y JavaScript. Sus alas se mueven mediante una animación,
+        y puedes controlar su posición con los botones de dirección.
+    </p>
+
+    <h3>🔧 ¿Cómo construir una abeja robot real?</h3>
+
+    <p class="descripcion">
+        <b>Materiales orientativos:</b> Arduino, microservomotores,
+        batería adecuada, estructura ligera, cables y componentes
+        electrónicos compatibles.
+        <br><br>
+        <b>Funcionamiento:</b> un microcontrolador puede controlar
+        los movimientos de un prototipo físico. El diseño y los
+        componentes dependerán del tamaño y de las funciones que
+        quieras construir.
+    </p>
+
+</div>
+
+<script>
+
+/* POSICIÓN DE <!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+
+<title>ABEJA ROBÓTICA APP</title>
+
+<style>
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    background: #1a1a2e;
+    color: white;
+    font-family: Arial, sans-serif;
+    text-align: center;
+}
+
+header {
+    background: #ff8c00;
+    color: black;
+    padding: 15px;
+    font-size: 22px;
+    font-weight: bold;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    border-bottom: 3px solid #ffb347;
+}
+
+/* ÁREA DE LA ABEJA */
+#arena {
+    width: 95%;
+    height: 320px;
+    background: #16213e;
+    border: 3px solid #ff8c00;
+    border-radius: 15px;
+    margin: 15px auto;
+    position: relative;
+    overflow: hidden;
+}
+
+/* ABEJA COMPLETA */
+#abeja {
+    position: absolute;
+    width: 140px;
+    height: 155px;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    transition: left .2s, top .2s;
+}
+
+/* CUERPO CON FRANJAS */
+.cuerpo {
+    width: 76px;
+    height: 90px;
+    position: absolute;
+    top: 35px;
+    left: 32px;
+    background: repeating-linear-gradient(
+        to bottom,
+        #ff9500 0px,
+        #ff9500 18px,
+        #171717 18px,
+        #171717 36px
+    );
+    border: 3px solid #ffb347;
+    border-radius: 48%;
+    box-shadow: 0 0 14px #ff8c00;
+    z-index: 3;
+}
+
+/* CABEZA */
+.cabeza {
+    position: absolute;
+    width: 65px;
+    height: 60px;
+    top: -27px;
+    left: 3px;
+    background: #ffae42;
+    border: 3px solid #ff8c00;
+    border-radius: 50%;
+}
+
+/* OJOS */
+.ojo {
+    position: absolute;
+    width: 15px;
+    height: 19px;
+    background: white;
+    border: 2px solid #222;
+    border-radius: 50%;
+    top: 17px;
+}
+
+.ojo::after {
+    content: "";
+    position: absolute;
+    width: 7px;
+    height: 10px;
+    background: #111;
+    border-radius: 50%;
+    top: 3px;
+    left: 3px;
+}
+
+.ojo.izquierdo {
+    left: 9px;
+}
+
+.ojo.derecho {
+    right: 9px;
+}
+
+/* SONRISA */
+.boca {
+    position: absolute;
+    width: 20px;
+    height: 10px;
+    border-bottom: 3px solid #222;
+    border-radius: 50%;
+    top: 42px;
+    left: 20px;
+}
+
+/* ANTENAS */
+.antena {
+    position: absolute;
+    width: 4px;
+    height: 25px;
+    background: #ff8c00;
+    border: 1px solid #222;
+    top: -23px;
+    border-radius: 5px;
+    transform-origin: bottom;
+}
+
+.antena.izquierda {
+    left: 14px;
+    transform: rotate(-30deg);
+}
+
+.antena.derecha {
+    right: 14px;
+    transform: rotate(30deg);
+}
+
+.antena::after {
+    content: "";
+    position: absolute;
+    width: 11px;
+    height: 11px;
+    background: #ff8c00;
+    border: 2px solid #222;
+    border-radius: 50%;
+    top: -7px;
+    left: -5px;
+}
+
+/* ALAS ANIMADAS */
+.ala {
+    position: absolute;
+    width: 42px;
+    height: 58px;
+    background: rgba(180, 230, 255, 0.75);
+    border: 3px solid #ffb347;
+    border-radius: 50%;
+    top: 7px;
+    z-index: 1;
+    transform-origin: bottom center;
+    animation: volar .25s infinite alternate;
+}
+
+.ala.izquierda {
+    left: 7px;
+    transform: rotate(-35deg);
+}
+
+.ala.derecha {
+    right: 7px;
+    transform: rotate(35deg);
+}
+
+@keyframes volar {
+    from {
+        margin-top: -3px;
+    }
+    to {
+        margin-top: 5px;
+    }
+}
+
+/* SEIS PATAS */
+.pata {
+    position: absolute;
+    width: 28px;
+    height: 5px;
+    background: #222;
+    border: 2px solid #ff8c00;
+    border-radius: 5px;
+    z-index: 2;
+}
+
+.p1 {
+    top: 65px;
+    left: 8px;
+    transform: rotate(35deg);
+}
+
+.p2 {
+    top: 88px;
+    left: 5px;
+}
+
+.p3 {
+    top: 111px;
+    left: 8px;
+    transform: rotate(-35deg);
+}
+
+.p4 {
+    top: 65px;
+    right: 8px;
+    transform: rotate(-35deg);
+}
+
+.p5 {
+    top: 88px;
+    right: 5px;
+}
+
+.p6 {
+    top: 111px;
+    right: 8px;
+    transform: rotate(35deg);
+}
+
+/* AGUIJÓN */
+.aguijon {
+    position: absolute;
+    left: 58px;
+    bottom: 0;
+    width: 0;
+    height: 0;
+    border-left: 12px solid transparent;
+    border-right: 12px solid transparent;
+    border-top: 22px solid #ff8c00;
+    z-index: 2;
+}
+
+/* LUCES DEL ROBOT */
+.luz {
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    background: #ff8c00;
+    border-radius: 50%;
+    box-shadow: 0 0 10px #ff8c00;
+    bottom: 15px;
+    left: 33px;
+}
+
+/* MOVIMIENTO AL SALUDAR */
+.saludando .antena.derecha {
+    animation: saludo .3s infinite alternate;
+}
+
+.saludando .cabeza {
+    animation: cabeza .3s infinite alternate;
+}
+
+@keyframes saludo {
+    from {
+        transform: rotate(30deg);
+    }
+    to {
+        transform: rotate(75deg);
+    }
+}
+
+@keyframes cabeza {
+    from {
+        rotate: -5deg;
+    }
+    to {
+        rotate: 5deg;
+    }
+}
+
+/* CONTROLES */
+#controles {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    width: 90%;
+    max-width: 300px;
+    margin: 15px auto;
+}
+
+.btn {
+    padding: 22px 0;
+    font-size: 24px;
+    background: #0f3460;
+    border: 2px solid #ff8c00;
+    color: #ffae42;
+    border-radius: 15px;
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: manipulation;
+}
+
+.btn:active {
+    background: #ff8c00;
+    color: black;
+}
+
+.btn-saludar {
+    grid-column: 1 / 4;
+    background: #e94560;
+    border-color: #e94560;
+    color: white;
+    font-size: 18px;
+    padding: 15px;
+}
+
+/* TARJETAS */
+.card {
+    background: #16213e;
+    border: 2px solid #ff8c00;
+    border-radius: 15px;
+    padding: 15px;
+    margin: 15px 10px;
+    text-align: left;
+}
+
+.card h2 {
+    color: #ffae42;
+    text-align: center;
+    margin: 5px 0 15px;
+}
+
+.card h3 {
+    color: #ffae42;
+}
+
+.img-box {
+    width: 100%;
+    background: #0f3460;
+    border-radius: 10px;
+    padding: 8px;
+    margin: 8px 0;
+}
+
+.img-box img {
+    display: block;
+    width: 100%;
+    height: 180px;
+    object-fit: contain;
+    border-radius: 8px;
+    background: #080b15;
+}
+
+input[type="file"] {
+    width: 100%;
+    margin: 8px 0;
+    color: white;
+}
+
+audio {
+    width: 100%;
+    margin-top: 10px;
+}
+
+.descripcion {
+    font-size: 14px;
+    line-height: 1.5;
+}
+</style>
+</head>
+
+<body>
+
+<header>🐝 ABEJA ROBÓTICA APP 🤖</header>
+
+<h2 style="color:#ffae42">¡Controla mi abeja robot!</h2>
+
+<!-- ÁREA DE MOVIMIENTO -->
+<div id="arena">
+
+    <div id="abeja">
+
+        <!-- ALAS -->
+        <div class="ala izquierda"></div>
+        <div class="ala derecha"></div>
+
+        <!-- PATAS -->
+        <div class="pata p1"></div>
+        <div class="pata p2"></div>
+        <div class="pata p3"></div>
+        <div class="pata p4"></div>
+        <div class="pata p5"></div>
+        <div class="pata p6"></div>
+
+        <!-- CUERPO -->
+        <div class="cuerpo">
+
+            <!-- CABEZA -->
+            <div class="cabeza">
+                <div class="antena izquierda"></div>
+                <div class="antena derecha"></div>
+
+                <div class="ojo izquierdo"></div>
+                <div class="ojo derecho"></div>
+
+                <div class="boca"></div>
+            </div>
+
+            <div class="luz"></div>
+        </div>
+
+        <!-- AGUIJÓN -->
+        <div class="aguijon"></div>
+
+    </div>
+
+</div>
+
+<!-- CONTROLES -->
+<div id="controles">
+
+    <div></div>
+
+    <button class="btn" onclick="mover('arriba')">⬆️</button>
+
+    <div></div>
+
+    <button class="btn" onclick="mover('izquierda')">⬅️</button>
+
+    <button class="btn" onclick="mover('abajo')">⬇️</button>
+
+    <button class="btn" onclick="mover('derecha')">➡️</button>
+
+    <button class="btn btn-saludar" onclick="saludar()">
+        👋 SALUDAR
+    </button>
+
+</div>
+
+<!-- IMÁGENES -->
+<div class="card">
+
+    <h2>📸 2 Imágenes de la Abeja Robot</h2>
+
+    <div class="img-box">
+        <p>IMAGEN 1 - Selecciona una foto de tu galería</p>
+
+        <input type="file"
+               accept="image/*"
+               onchange="cargarImg(this,'img1')">
+
+        <img id="img1"
+             alt="Primera imagen seleccionada"
+             src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='200'%3E%3Crect width='100%25' height='100%25' fill='%230f3460'/%3E%3Ctext x='50%25' y='45%25' font-size='22' text-anchor='middle' fill='%23ffae42'%3EABEJA ROBOT%3C/text%3E%3Ctext x='50%25' y='65%25' font-size='15' text-anchor='middle' fill='white'%3ESelecciona una foto%3C/text%3E%3C/svg%3E">
+    </div>
+
+    <div class="img-box">
+        <p>IMAGEN 2 - Selecciona otra foto de tu galería</p>
+
+        <input type="file"
+               accept="image/*"
+               onchange="cargarImg(this,'img2')">
+
+        <img id="img2"
+             alt="Segunda imagen seleccionada"
+             src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='200'%3E%3Crect width='100%25' height='100%25' fill='%230f3460'/%3E%3Ctext x='50%25' y='45%25' font-size='22' text-anchor='middle' fill='%23ffae42'%3EABEJA ROBOT%3C/text%3E%3Ctext x='50%25' y='65%25' font-size='15' text-anchor='middle' fill='white'%3ESelecciona una foto%3C/text%3E%3C/svg%3E">
+    </div>
+
+</div>
+
+<!-- PODCAST -->
+<div class="card">
+
+    <h2>🎧 Audio de Voz - Podcast</h2>
+
+    <p>1. Graba tu voz desde el celular:</p>
+
+    <button class="btn btn-saludar"
+            style="grid-column:auto"
+            onclick="grabarAudio()">
+        🎤 GRABAR / PARAR
+    </button>
+
+    <p id="estadoAudio"
+       style="color:#ffae42;text-align:center">
+    </p>
+
+    <audio id="player" controls></audio>
+
+    <p style="margin-top:20px">
+        2. O selecciona un audio de tu celular:
+    </p>
+
+    <input type="file"
+           accept="audio/*"
+           onchange="cargarAudio(this)">
+
+</div>
+
+<!-- INFORMACIÓN -->
+<div class="card">
+
+    <h2>🐝 Información de la Abeja Robot</h2>
+
+    <p class="descripcion">
+        Esta abeja robótica es una representación creada con HTML,
+        CSS y JavaScript. Sus alas se mueven mediante una animación,
+        y puedes controlar su posición con los botones de dirección.
+    </p>
+
+    <h3>🔧 ¿Cómo construir una abeja robot real?</h3>
+
+    <p class="descripcion">
+        <b>Materiales orientativos:</b> Arduino, microservomotores,
+        batería adecuada, estructura ligera, cables y componentes
+        electrónicos compatibles.
+        <br><br>
+        <b>Funcionamiento:</b> un microcontrolador puede controlar
+        los movimientos de un prototipo físico. El diseño y los
+        componentes dependerán del tamaño y de las funciones que
+        quieras construir.
+    </p>
+
+</div>
+
+<script>
+
+/* POSICIÓN DE LA ABEJA */
+let x = 50;
+let y = 50;
+
+const abeja = document.getElementById("abeja");
+const arena = document.getElementById("arena");
+
+/* MOVIMIENTO */
+function mover(direccion) {
+
+    if (direccion === "arriba" && y > 20) {
+        y -= 10;
+    }
+
+    if (direccion === "abajo" && y < 80) {
+        y += 10;
+    }
+
+    if (direccion === "izquierda" && x > 15) {
+        x -= 10;
+    }
+
+    if (direccion === "derecha" && x < 85) {
+        x += 10;
+    }
+
+    abeja.style.left = x + "%";
+    abeja.style.top = y + "%";
+
+    if (navigator.vibrate) {
+        navigator.vibrate(30);
+    }
+}
+
+/* SALUDAR */
+function saludar() {
+
+    abeja.classList.add("saludando");
+
+    if (navigator.vibrate) {
+        navigator.vibrate([50, 50, 100]);
+    }
+
+    setTimeout(function() {
+        abeja.classList.remove("saludando");
+    }, 2000);
+}
+
+/* CARGAR IMÁGENES */
+function cargarImg(input, id) {
+
+    const archivo = input.files[0];
+
+    if (archivo) {
+
+        const imagen = document.getElementById(id);
+
+        if (imagen.dataset.urlAnterior) {
+            URL.revokeObjectURL(imagen.dataset.urlAnterior);
+        }
+
+        const url = URL.createObjectURL(archivo);
+
+        imagen.src = url;
+        imagen.dataset.urlAnterior = url;
+    }
+}
+
+/* CARGAR AUDIO */
+let audioSubidoURL = null;
+let audioGrabadoURL = null;
+
+function cargarAudio(input) {
+
+    const archivo = input.files[0];
+
+    if (archivo) {
+
+        if (audioSubidoURL) {
+            URL.revokeObjectURL(audioSubidoURL);
+        }
+
+        audioSubidoURL = URL.createObjectURL(archivo);
+
+        const reproductor = document.getElementById("player");
+
+        reproductor.src = audioSubidoURL;
+        reproductor.load();
+
+        document.getElementById("estadoAudio").innerText =
+            "✅ Audio cargado correctamente";
+    }
+}
+
+/* GRABAR AUDIO */
+let mediaRecorder = null;
+let audioChunks = [];
+let grabacionActiva = false;
+
+async function grabarAudio() {
+
+    const estado = document.getElementById("estadoAudio");
+
+    if (!navigator.mediaDevices ||
+        !navigator.mediaDevices.getUserMedia ||
+        !window.MediaRecorder) {
+
+        estado.innerText =
+            "⚠️ Tu navegador no permite grabar aquí. Prueba con un navegador compatible y una conexión segura.";
+
+        return;
+    }
+
+    if (!grabacionActiva) {
+
+        try {
+
+            const stream =
+                await navigator.mediaDevices.getUserMedia({
+                    audio: true
+                });
+
+            let opciones = {};
+
+            if (MediaRecorder.isTypeSupported("audio/webm;codecs=opus")) {
+                opciones.mimeType = "audio/webm;codecs=opus";
+            } else if (MediaRecorder.isTypeSupported("audio/mp4")) {
+                opciones.mimeType = "audio/mp4";
+            }
+
+            mediaRecorder = new MediaRecorder(stream, opciones);
+            audioChunks = [];
+
+            mediaRecorder.ondataavailable = function(evento) {
+                if (evento.data && evento.data.size > 0) {
+                    audioChunks.push(evento.data);
+                }
+            };
+
+            mediaRecorder.onstop = function() {
+
+                const tipo = mediaRecorder.mimeType || "audio/webm";
+
+                const archivoAudio = new Blob(audioChunks, {
+                    type: tipo
+                });
+
+                if (audioGrabadoURL) {
+                    URL.revokeObjectURL(audioGrabadoURL);
+                }
+
+                audioGrabadoURL =
+                    URL.createObjectURL(archivoAudio);
+
+                const reproductor = document.getElementById("player");
+
+                reproductor.src = audioGrabadoURL;
+                reproductor.load();
+
+                estado.innerText =
+                    "✅ Grabación terminada. Pulsa reproducir para escucharla.";
+
+                stream.getTracks().forEach(function(pista) {
+                    pista.stop();
+                });
+
+                grabacionActiva = false;
+            };
+
+            mediaRecorder.start();
+            grabacionActiva = true;
+
+            estado.innerText =
+                "🔴 Grabando... pulsa GRABAR / PARAR para finalizar.";
+
+        } catch (error) {
+
+            estado.innerText =
+                "⚠️ No se pudo acceder al micrófono. Revisa los permisos.";
+
+        }
+
+    } else {
+
+        if (mediaRecorder && mediaRecorder.state === "recording") {
+            mediaRecorder.stop();
+            estado.innerText = "⏳ Procesando grabación...";
+        }
+    }
+}
+
+/* TECLAS DE DIRECCIÓN */
+document.addEventListener("keydown", function(evento) {
+
+    const teclas = {
+        "ArrowUp": "arriba",
+        "ArrowDown": "abajo",
+        "ArrowLeft": "izquierda",
+        "ArrowRight": "derecha"
+    };
+
+    if (teclas[evento.key]) {
+        evento.preventDefault();
+        mover(teclas[evento.key]);
+    }
+});
+
+</script>
+
+</body>
+</html>LA ABEJA */
+let x = 50;
+let y = 50;
+
+const abeja = document.getElementById("abeja");
+const arena = document.getElementById("arena");
+
+/* MOVIMIENTO */
+function mover(direccion) {
+
+    if (direccion === "arriba" && y > 20) {
+        y -= 10;
+    }
+
+    if (direccion === "abajo" && y < 80) {
+        y += 10;
+    }
+
+    if (direccion === "izquierda" && x > 15) {
+        x -= 10;
+    }
+
+    if (direccion === "derecha" && x < 85) {
+        x += 10;
+    }
+
+    abeja.style.left = x + "%";
+    abeja.style.top = y + "%";
+
+    if (navigator.vibrate) {
+        navigator.vibrate(30);
+    }
+}
+
+/* SALUDAR */
+function saludar() {
+
+    abeja.classList.add("saludando");
+
+    if (navigator.vibrate) {
+        navigator.vibrate([50, 50, 100]);
+    }
+
+    setTimeout(function() {
+        abeja.classList.remove("saludando");
+    }, 2000);
+}
+
+/* CARGAR IMÁGENES */
+function cargarImg(input, id) {
+
+    const archivo = input.files[0];
+
+    if (archivo) {
+
+        const imagen = document.getElementById(id);
+
+        if (imagen.dataset.urlAnterior) {
+            URL.revokeObjectURL(imagen.dataset.urlAnterior);
+        }
+
+        const url = URL.createObjectURL(archivo);
+
+        imagen.src = url;
+        imagen.dataset.urlAnterior = url;
+    }
+}
+
+/* CARGAR AUDIO */
+let audioSubidoURL = null;
+let audioGrabadoURL = null;
+
+function cargarAudio(input) {
+
+    const archivo = input.files[0];
+
+    if (archivo) {
+
+        if (audioSubidoURL) {
+            URL.revokeObjectURL(audioSubidoURL);
+        }
+
+        audioSubidoURL = URL.createObjectURL(archivo);
+
+        const reproductor = document.getElementById("player");
+
+        reproductor.src = audioSubidoURL;
+        reproductor.load();
+
+        document.getElementById("estadoAudio").innerText =
+            "✅ Audio cargado correctamente";
+    }
+}
+
+/* GRABAR AUDIO */
+let mediaRecorder = null;
+let audioChunks = [];
+let grabacionActiva = false;
+
+async function grabarAudio() {
+
+    const estado = document.getElementById("estadoAudio");
+
+    if (!navigator.mediaDevices ||
