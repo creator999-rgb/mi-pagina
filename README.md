@@ -1,2 +1,2 @@
-# mi-pagina
+# mi-pagina.html
 Página xd
